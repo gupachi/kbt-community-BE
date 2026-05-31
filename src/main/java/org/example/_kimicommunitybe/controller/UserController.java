@@ -14,14 +14,17 @@ import java.util.List;
 public  class UserController {
     @Autowired
     UserService userService;
-    //create 요청은 post를 날리니까  PostMapping 어노테이션을 단다.
+
+    //회원가입
     //UserJoinDTO 를 Request body로서 받는다.
     @PostMapping
-    public UserJoinDTO insertUser(@Validated @RequestBody UserJoinDTO user){
-        return userService.insertUser(user);
+    public UserJoinDTO createUser(@Validated @RequestBody UserJoinDTO user){
+        return userService.createUser(user);
     }
-    //get all  요청은 get 요청를 날리니까  GETMapping 어노테이션을 단다.
-    @GetMapping
+
+
+    //데이터 전체 읽기(테스트)
+    @GetMapping("/all")
     public List<UserJoinDTO> getAllUsers() {
         return  userService.getAllUsers();
     }
