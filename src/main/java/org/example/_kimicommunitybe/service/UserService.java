@@ -23,8 +23,7 @@ public class UserService {
         if(checkEmail(email)){
             throw new DuplicateResourceException("중복된 이메일입니다.");
         }
-        // [조건 2] 닉네임 중복 검사: 중복이면 즉시 예외 던지고 종료
-        // (앞의 이메일 검사를 무사히 통과한 경우에만 이 코드가 실행됩니다)
+        // 2. 닉네임 중복 검사: 중복이면 즉시 예외 던지고 종료
         if(checkNickname(nickname)){
           throw new DuplicateResourceException("중복된 닉네임입니다.");
         }
