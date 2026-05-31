@@ -1,9 +1,9 @@
 package org.example._kimicommunitybe.controller;
 
 import org.example._kimicommunitybe.dto.LoginDTO;
-import org.example._kimicommunitybe.service.JwtTokenService;
 import org.example._kimicommunitybe.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
