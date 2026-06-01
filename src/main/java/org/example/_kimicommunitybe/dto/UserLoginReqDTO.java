@@ -3,14 +3,12 @@ package org.example._kimicommunitybe.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
+//어노테이션도 왜 쓰는지 이유를 작성할 것.
 @Getter
-@Setter
-@AllArgsConstructor
-public class LoginDTO {
+//setter 는 외부에서도 수정이 가능함으로, 왠만해서는 사용하면 안 된다.
+public class UserLoginReqDTO {
     @NotBlank(message = "이메일을 입력해주세요")
     @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$", message = "올바른 이메일 주소 형식을 입력해주세요")
     private String email;

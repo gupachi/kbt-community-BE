@@ -1,11 +1,9 @@
 package org.example._kimicommunitybe.controller;
 
-import org.example._kimicommunitybe.dto.LoginDTO;
+import org.example._kimicommunitybe.dto.UserLoginReqDTO;
 import org.example._kimicommunitybe.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -19,7 +17,7 @@ public class CommonController {
 
     @PostMapping("/login")
     //접근제한자 [return 타입] 이름(파라미터)
-    public ResponseEntity<Map<String, String>>  loginUser(@RequestBody LoginDTO user) {
+    public ResponseEntity<Map<String, String>>  loginUser(@RequestBody UserLoginReqDTO user) {
         return loginService.loginUser(user);
 
     }

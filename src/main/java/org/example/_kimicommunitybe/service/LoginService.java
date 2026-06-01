@@ -1,7 +1,7 @@
 package org.example._kimicommunitybe.service;
 
-import org.example._kimicommunitybe.dto.LoginDTO;
-import org.example._kimicommunitybe.dto.UserJoinDTO;
+import org.example._kimicommunitybe.dto.UserLoginReqDTO;
+import org.example._kimicommunitybe.entity.UserEntity;
 import org.example._kimicommunitybe.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +22,9 @@ public class LoginService {
     @Autowired
     UserRepository userRepository;
 
-    public ResponseEntity<Map<String, String>> loginUser(LoginDTO user){
+    public ResponseEntity<Map<String, String>> loginUser(UserLoginReqDTO user){
       //1.db에서 getUser 실행 결과를 담는 result 객체 정의
-      Optional<UserJoinDTO> result =  userRepository.getUser(user);
+      Optional<UserEntity> result =  userRepository.getUser(user);
       //db에서 로그인 정보와 일치된 사용자를 찾은 경우.
       if(result.isPresent()) {
           //1.정상 확인 되면 토큰 발급함.

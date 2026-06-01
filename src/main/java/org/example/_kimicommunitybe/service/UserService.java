@@ -1,13 +1,13 @@
 package org.example._kimicommunitybe.service;
-import org.example._kimicommunitybe.dto.LoginDTO;
+import org.example._kimicommunitybe.dto.UserPasswordReqDTO;
+import org.example._kimicommunitybe.dto.UserUpdateReqDTO;
+import org.example._kimicommunitybe.entity.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.example._kimicommunitybe.dto.UserJoinDTO;
+import org.example._kimicommunitybe.dto.UserSignReqDTO;
 import org.example._kimicommunitybe.repository.UserRepository;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -16,7 +16,7 @@ public class UserService {
     UserRepository userRepository;
 
 
-    public UserJoinDTO createUser( UserJoinDTO user) {
+    public UserSignReqDTO  createUser( UserSignReqDTO user) {
         String email = user.getEmail();
         String nickname = user.getNickname();
         //1,이메일 중복 체크 확인, 닉네임 중복 체크 확인
@@ -27,13 +27,27 @@ public class UserService {
         if(checkNickname(nickname)){
           throw new DuplicateResourceException("중복된 닉네임입니다.");
         }
-        //2.위에 조건 만족하면, user 생성.
-            return userRepository.createUser(user);
-
+        //2.위에 조건 만족하면, user 생성.(dto->entity) 생각할 것.(수정 필요!!!!!!!)
+        //   return userRepository.createUser(user);
+        return userRepository.createUser(user);
     }
-    //controller get user 전체 읽기 요청이 들어오면 repository에 getAll 실행.
-    public List<UserJoinDTO> getAllUsers() {
-        return userRepository.getAllUsers();
+    //user 정보 수정.
+    public String updateUser(Long id,UserUpdateReqDTO user) {
+        String nickname = user.getNickname();
+        String profile_img = user.getProfile_image();
+        //유효하지 않은 user_id 401에러 처리.
+
+        //닉네임 중복 확인.
+        if(checkNickname(nickname)){
+            throw new DuplicateResourceException("중복된 닉네임입니다.");
+        }
+        userRepository.updateUser(id, nickname, profile_img);
+        return  "";
+    }
+    //비밀번호 변경.
+    public String  updatePassword(Long id, UserPasswordReqDTO password) {
+        userRepository.updatePassword(id,password.getPassword() );
+        return  "";
     }
 
     //이메일 중복 체크
@@ -45,4 +59,8 @@ public class UserService {
         return userRepository.checkNickname(nickname);
     }
 
+    //전체 user 받기
+    public List<UserEntity> getAllUsers() {
+        return userRepository.getAllUsers();
+    }
 }

@@ -19,13 +19,19 @@ repositories {
 }
 
 dependencies {
-    //jwt 관련 파일 implements
+    //jwt 관련 파일 연동
     implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
-
+    //mysql 관련 연동
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.12.0'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+    //자동으로 webmvc 를 설정하면, tomcat 을 사용한다. 
     implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    //entity 관련 연동
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'
