@@ -1,66 +1,54 @@
 package org.example._kimicommunitybe.service;
-import org.example._kimicommunitybe.dto.UserPasswordReqDTO;
-import org.example._kimicommunitybe.dto.UserUpdateReqDTO;
+import org.example._kimicommunitybe.dto.Request.UserLoginRequestDTO;
+import org.example._kimicommunitybe.dto.Response.UserSignResponseDTO;
 import org.example._kimicommunitybe.entity.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.example._kimicommunitybe.dto.UserSignReqDTO;
+import org.example._kimicommunitybe.dto.Request.UserSignRequestDTO;
 import org.example._kimicommunitybe.repository.UserRepository;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
+//User와 관련된 비즈니스 로직만 처리한다.
 public class UserService {
-    //의존성 주입.
-    @Autowired
-    UserRepository userRepository;
+   @Autowired
+   UserRepository userRepository;
+//   private final JwtTokenService jwtTokenService;
+//
+//    public  UserService(JwtTokenService jwtTokenService){
+//        this.jwtTokenService=jwtTokenService;
+//    }
+   //로그인
+
+   //회원가입.
+   public UserSignResponseDTO createUser(UserSignRequestDTO user){
+       //1.이메일 db 중복 확인.
+       if(userRepository.existsByEmail(user.getEmail())){
+           throw new IllegalArgumentException("이미 가입된 이메일입니다.");
+       }
+       //2.닉네임 db 중복 확인.
+       if(userRepository.existsByNickname(user.getNickname())){
+           throw new IllegalArgumentException("이미 사용 중인 닉네임입니다.");
+       }
+       //3.입력된 DTO 정보+ ( activate 설정)
+       UserEntity userEntity = new UserEntity();
+       userEntity.setEmail(user.getEmail());
+       userEntity.setPassword(user.getPassword());
+       userEntity.setNickname(user.getNickname());
+       userEntity.setProfileImage(user.getProfile_image());
+       userEntity.setActivate('1'); // char 타입으로 '1' 저장
 
 
-    public UserSignReqDTO  createUser( UserSignReqDTO user) {
-        String email = user.getEmail();
-        String nickname = user.getNickname();
-        //1,이메일 중복 체크 확인, 닉네임 중복 체크 확인
-        if(checkEmail(email)){
-            throw new DuplicateResourceException("중복된 이메일입니다.");
-        }
-        // 2. 닉네임 중복 검사: 중복이면 즉시 예외 던지고 종료
-        if(checkNickname(nickname)){
-          throw new DuplicateResourceException("중복된 닉네임입니다.");
-        }
-        //2.위에 조건 만족하면, user 생성.(dto->entity) 생각할 것.(수정 필요!!!!!!!)
-        //   return userRepository.createUser(user);
-        return userRepository.createUser(user);
-    }
-    //user 정보 수정.
-    public String updateUser(Long id,UserUpdateReqDTO user) {
-        String nickname = user.getNickname();
-        String profile_img = user.getProfile_image();
-        //유효하지 않은 user_id 401에러 처리.
-
-        //닉네임 중복 확인.
-        if(checkNickname(nickname)){
-            throw new DuplicateResourceException("중복된 닉네임입니다.");
-        }
-        userRepository.updateUser(id, nickname, profile_img);
-        return  "";
-    }
-    //비밀번호 변경.
-    public String  updatePassword(Long id, UserPasswordReqDTO password) {
-        userRepository.updatePassword(id,password.getPassword() );
-        return  "";
-    }
-
-    //이메일 중복 체크
-    public Boolean checkEmail(String email){
-        return userRepository.checkEmail(email);
-    }
-    //닉네임 중복 체크
-    public Boolean checkNickname(String nickname){
-        return userRepository.checkNickname(nickname);
-    }
-
-    //전체 user 받기
-    public List<UserEntity> getAllUsers() {
-        return userRepository.getAllUsers();
-    }
+       UserEntity savedEntity= userRepository.save(userEntity);
+       return new UserSignResponseDTO(
+               savedEntity.getNickname(),
+               savedEntity.getProfileImage()
+       );
+   }
 }
+
+

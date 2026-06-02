@@ -1,9 +1,10 @@
 package org.example._kimicommunitybe.controller;
 
-import org.example._kimicommunitybe.dto.UserUpdateReqDTO;
-import org.example._kimicommunitybe.service.LoginService;
+import org.example._kimicommunitybe.dto.Request.PostCreateRequestDTO;
 import org.example._kimicommunitybe.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -11,13 +12,14 @@ import org.springframework.web.bind.annotation.*;
 public class PostController {
     @Autowired
     PostService postService;
-    //게시글 상세 조회.
-    @GetMapping("/{postId}")
-    public String getPost(@PathVariable("postId") Long Id){
-        return postService.readPost(Id);
+
+    //게시글 등록
+    @PostMapping
+    public ResponseEntity<String> createPost(@RequestBody  PostCreateRequestDTO post){
+        String result= postService.createPost(post);
+        //(수정!) : status code 랑,message 어떻게 할지 결정.
+        return ResponseEntity.status(HttpStatus.CREATED).body("게시물이 성공적으로 만들어졌습니다.");
     }
-    //게시글 수정.
-
-
+    //게시글 수정
 
 }

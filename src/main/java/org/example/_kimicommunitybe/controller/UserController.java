@@ -1,14 +1,15 @@
 package org.example._kimicommunitybe.controller;
 
-import org.example._kimicommunitybe.dto.UserPasswordReqDTO;
-import org.example._kimicommunitybe.dto.UserSignReqDTO;
-import org.example._kimicommunitybe.dto.UserUpdateReqDTO;
-import org.example._kimicommunitybe.entity.UserEntity;
+import org.example._kimicommunitybe.dto.Request.UserLoginRequestDTO;
+import org.example._kimicommunitybe.dto.Request.UserSignRequestDTO;
+import org.example._kimicommunitybe.dto.Response.UserSignResponseDTO;
 import org.example._kimicommunitybe.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Map;
 
 //controller 는  실질적으로 Url에서 다음과 같이 올바른 형식을 입력하면 해당 service(비즈니스) 로직이 실행되게 한다.
 @RestController
@@ -16,28 +17,12 @@ import java.util.List;
 public  class UserController {
     @Autowired
     UserService userService;
+    //로그인
 
-    //회원가입
-    //UserRequestDTO 를 Request body로서 받는다.
+    //회원가입(user_id 어떻게 받을지 고민)
     @PostMapping
-    public UserSignReqDTO createUser(@RequestBody UserSignReqDTO user) {
-        return userService.createUser(user);
+    public ResponseEntity<UserSignResponseDTO>  createUser(@RequestBody UserSignRequestDTO user) {
+        UserSignResponseDTO responseDTO = userService.createUser(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
-
-    //유저 정보 수정(닉네임,프로필 이미지)
-    @PatchMapping("/{userId}")
-    public String updateUser(@PathVariable("userId") Long userId,@RequestBody UserUpdateReqDTO user){
-        return userService.updateUser(userId,user);
-    }
-    @PatchMapping("/{userId}/password")
-    public String  updateUser(@PathVariable("userId") Long userId, @RequestBody UserPasswordReqDTO password){
-        return userService.updatePassword(userId,password);
-    }
-
-    //데이터 전체 읽기(테스트)
-    @GetMapping("/all")
-    public List<UserEntity> getAllUsers() {
-        return  userService.getAllUsers();
-    }
-
 }
