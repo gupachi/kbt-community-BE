@@ -8,7 +8,6 @@ import java.util.Optional;
 @Repository
 //CRUD 로직 처리, DB 접근 처리
 public interface  UserRepository extends JpaRepository<UserEntity, Long> {
-
     boolean existsByEmail(String email);
     boolean existsByNickname(String nickname);
 }

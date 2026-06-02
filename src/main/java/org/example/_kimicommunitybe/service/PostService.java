@@ -1,6 +1,8 @@
 package org.example._kimicommunitybe.service;
 
-import org.example._kimicommunitybe.dto.Request.PostCreateRequestDTO;
+import jakarta.transaction.Transactional;
+import org.example._kimicommunitybe.dto.Request.PostRequestDTO;
+import org.example._kimicommunitybe.dto.Request.UserPasswordRequestDTO;
 import org.example._kimicommunitybe.entity.PostEntity;
 import org.example._kimicommunitybe.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +15,8 @@ import java.time.format.DateTimeFormatter;
 public class PostService {
     @Autowired
     PostRepository postRepository;
-
-    public String  createPost(PostCreateRequestDTO post){
+    //게시글 생성.
+    public String  createPost(PostRequestDTO post){
         PostEntity postEntity = new PostEntity();
 
         LocalDateTime now = LocalDateTime.now();
@@ -32,5 +34,20 @@ public class PostService {
 
         return  "";
     }
+    //게시글 수정.
+    @Transactional
+    public String updatePost(Long id,PostRequestDTO post){
+        String title = post.getTitle();
+        String content = post.getContent();
+        String content_image = post.getContent_image();
+        postRepository.findById(id).ifPresent(p -> {
+            if (title != null) p.setTitle(title);
+            if (content != null) p.setContent(content);
+            if (content_image != null) p.setContentImage(content_image);
+        });
+        return "";
+    }
+
+
 
 }

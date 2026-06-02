@@ -14,7 +14,7 @@ public class CommentService {
 
     @Autowired
     CommentRepository commentRepository;
-
+    //게시글 추가.
     public String createComment(CommentCreateRequestDTO comment){
         CommentEntity commentEntity = new CommentEntity();
 
@@ -29,5 +29,7 @@ public class CommentService {
         CommentEntity savedEntiity = commentRepository.save(commentEntity);
         return  "";
     }
+    //게시글 수정.
+
 
 }

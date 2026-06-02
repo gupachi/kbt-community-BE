@@ -1,6 +1,6 @@
 package org.example._kimicommunitybe.controller;
 
-import org.example._kimicommunitybe.dto.Request.PostCreateRequestDTO;
+import org.example._kimicommunitybe.dto.Request.PostRequestDTO;
 import org.example._kimicommunitybe.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,11 +15,15 @@ public class PostController {
 
     //게시글 등록
     @PostMapping
-    public ResponseEntity<String> createPost(@RequestBody  PostCreateRequestDTO post){
+    public ResponseEntity<String> createPost(@RequestBody PostRequestDTO post){
         String result= postService.createPost(post);
         //(수정!) : status code 랑,message 어떻게 할지 결정.
         return ResponseEntity.status(HttpStatus.CREATED).body("게시물이 성공적으로 만들어졌습니다.");
     }
     //게시글 수정
+    @PatchMapping("/{postId}")
+    public String updatePost(@PathVariable("postId") Long postId,@RequestBody PostRequestDTO post){
+        return postService.updatePost(postId,post);
+    }
 
 }
