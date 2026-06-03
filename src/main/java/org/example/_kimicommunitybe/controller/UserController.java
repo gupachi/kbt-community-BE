@@ -1,5 +1,6 @@
 package org.example._kimicommunitybe.controller;
 
+import org.example._kimicommunitybe.dto.Request.PostRequestDTO;
 import org.example._kimicommunitybe.dto.Request.UserSignRequestDTO;
 import org.example._kimicommunitybe.dto.Response.UserSignResponseDTO;
 import org.example._kimicommunitybe.dto.Request.UserPasswordRequestDTO;
@@ -35,6 +36,5 @@ public  class UserController {
     public String  updateUser(@PathVariable("userId") Long userId, @RequestBody UserPasswordRequestDTO password){
         return userService.updatePassword(userId,password);
     }
-
 
 }

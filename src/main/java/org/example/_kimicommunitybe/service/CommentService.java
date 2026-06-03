@@ -1,6 +1,7 @@
 package org.example._kimicommunitybe.service;
 
-import org.example._kimicommunitybe.dto.Request.CommentCreateRequestDTO;
+import jakarta.transaction.Transactional;
+import org.example._kimicommunitybe.dto.Request.CommentRequestDTO;
 import org.example._kimicommunitybe.entity.CommentEntity;
 import org.example._kimicommunitybe.repository.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ public class CommentService {
     @Autowired
     CommentRepository commentRepository;
     //게시글 추가.
-    public String createComment(CommentCreateRequestDTO comment){
+    public String createComment(CommentRequestDTO comment){
         CommentEntity commentEntity = new CommentEntity();
 
         LocalDateTime now = LocalDateTime.now();
@@ -30,6 +31,17 @@ public class CommentService {
         return  "";
     }
     //게시글 수정.
+    @Transactional
+    public String updateComment( Long commentId, CommentRequestDTO comment){
+        commentRepository.findById(commentId).ifPresent(c -> {
+            if (comment.getText() != null) c.setText(comment.getText());
+        });
+        return "댓글이 수정되었습니다.";
+    }
 
+    public String deleteComment( Long commentId){
+        commentRepository.deleteById(commentId);
+        return "댓글이 삭제되었습니다.";
+    }
 
 }

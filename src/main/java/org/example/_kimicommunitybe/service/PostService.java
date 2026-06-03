@@ -47,6 +47,11 @@ public class PostService {
         });
         return "";
     }
+    //게시글 삭제.
+    public String deletePost( Long postId){
+        postRepository.deleteById(postId);
+        return "게시글이 삭제되었습니다.";
+    }
 
 
 

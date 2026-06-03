@@ -21,9 +21,15 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.CREATED).body("게시물이 성공적으로 만들어졌습니다.");
     }
     //게시글 수정
-    @PatchMapping("/{postId}")
-    public String updatePost(@PathVariable("postId") Long postId,@RequestBody PostRequestDTO post){
+    @PatchMapping
+    public String updatePost(@RequestParam("postId") Long postId,@RequestBody PostRequestDTO post){
         return postService.updatePost(postId,post);
+    }
+    //게시글 삭제
+    @DeleteMapping
+    public String deletePost(
+            @RequestParam(name = "postId") Long id){
+        return  postService.deletePost(id);
     }
 
 }

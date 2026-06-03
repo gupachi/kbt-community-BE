@@ -14,11 +14,7 @@ import org.example._kimicommunitybe.repository.UserRepository;
 public class UserService {
    @Autowired
    UserRepository userRepository;
-//   private final JwtTokenService jwtTokenService;
-//
-//    public  UserService(JwtTokenService jwtTokenService){
-//        this.jwtTokenService=jwtTokenService;
-//    }
+
    //로그인.
 
    //회원가입.
