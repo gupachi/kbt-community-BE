@@ -1,20 +1,26 @@
 package org.example._kimicommunitybe.service;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.transaction.Transactional;
 import org.example._kimicommunitybe.dto.Request.PostRequestDTO;
 import org.example._kimicommunitybe.dto.Request.UserPasswordRequestDTO;
+import org.example._kimicommunitybe.dto.Response.PostResponseDTO;
 import org.example._kimicommunitybe.entity.PostEntity;
+import org.example._kimicommunitybe.entity.QPostEntity;
 import org.example._kimicommunitybe.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Service
 public class PostService {
     @Autowired
     PostRepository postRepository;
+
     //게시글 생성.
     public String  createPost(PostRequestDTO post){
         PostEntity postEntity = new PostEntity();

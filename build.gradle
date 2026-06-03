@@ -38,10 +38,22 @@ dependencies {
     testCompileOnly 'org.projectlombok:lombok'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testAnnotationProcessor 'org.projectlombok:lombok'
+     //QueryDSL.
+    implementation 'io.github.openfeign.querydsl:querydsl-jpa:7.1'
 
+    // 2. Q클래스 생성을 위한 APT 컴파일러 (:jakarta 필수!)
+    annotationProcessor 'io.github.openfeign.querydsl:querydsl-apt:7.1:jakarta'
+
+    // 3. Jakarta 환경에서 컴파일러가 인식할 수 있도록 어노테이션 API 추가
+    annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
+    annotationProcessor 'jakarta.persistence:jakarta.persistence-api'
 
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+clean {
+    delete file('src/main/generated')
 }
