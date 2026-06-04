@@ -17,8 +17,6 @@ import org.springframework.web.bind.annotation.*;
 public  class UserController {
     @Autowired
     UserService userService;
-    //로그인
-
     //회원가입
     //(수정!!) user_id 받는 방법 고민하고 받을 것
     @PostMapping
