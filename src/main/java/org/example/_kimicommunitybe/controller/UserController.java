@@ -1,5 +1,6 @@
 package org.example._kimicommunitybe.controller;
 
+import jakarta.validation.Valid;
 import org.example._kimicommunitybe.dto.Request.PostRequestDTO;
 import org.example._kimicommunitybe.dto.Request.UserSignRequestDTO;
 import org.example._kimicommunitybe.dto.Response.UserSignResponseDTO;
@@ -20,18 +21,18 @@ public  class UserController {
     //회원가입
     //(수정!!) user_id 받는 방법 고민하고 받을 것
     @PostMapping
-    public ResponseEntity<UserSignResponseDTO>  createUser(@RequestBody UserSignRequestDTO user) {
+    public ResponseEntity<UserSignResponseDTO>  createUser(@RequestBody @Valid UserSignRequestDTO user) {
         UserSignResponseDTO responseDTO = userService.createUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
     //유저 정보 수정.
     @PatchMapping("/{userId}")
-    public String updateUser(@PathVariable("userId") Long userId,@RequestBody UserUpdateRequestDTO user){
+    public String updateUser(@PathVariable("userId") Long userId,@RequestBody @Valid UserUpdateRequestDTO user){
         return userService.updateUser(userId,user);
     }
     //비밀번호 변경.
     @PatchMapping("/{userId}/password")
-    public String  updateUser(@PathVariable("userId") Long userId, @RequestBody UserPasswordRequestDTO password){
+    public String  updateUser(@PathVariable("userId") Long userId, @RequestBody @Valid UserPasswordRequestDTO password){
         return userService.updatePassword(userId,password);
     }
 

@@ -38,6 +38,8 @@ public class PostService {
 
         PostEntity savedEntiity = postRepository.save(postEntity);
 
+
+
         return  "";
     }
     //게시글 수정.

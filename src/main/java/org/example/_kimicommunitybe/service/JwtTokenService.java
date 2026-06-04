@@ -42,7 +42,8 @@ public class JwtTokenService {
                 .signWith(secretKey) //서명값
                 .compact(); //토큰 생성
     }
-    //jwt 코드 클라이언트 전달 코드.
+    //jwt 토큰 검증 코드
+
 
 
 }

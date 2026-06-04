@@ -5,5 +5,6 @@ import org.example._kimicommunitybe.entity.PostEntity;
 import java.util.List;
 
 public interface PostCustomRepository {
-    List<PostEntity> getPost(Integer lastSeenId);
+    List<PostEntity> getAllPost(Integer lastSeenId);
+    PostEntity getPost(Long postId);
 }

@@ -1,4 +1,4 @@
-package org.example._kimicommunitybe.config;
+package org.example._kimicommunitybe.common.config;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;

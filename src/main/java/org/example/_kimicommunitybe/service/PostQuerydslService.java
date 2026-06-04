@@ -21,8 +21,13 @@ public class PostQuerydslService {
     // PostCustomRepository 대신 통합된 PostRepository를 주입받는 것이 좋습니다.
     PostRepository postRepository;
 
-    public List<PostEntity> getPost(Integer lastSeenId) {
+    public List<PostEntity> getAllPost(Integer lastSeenId) {
         // 그렇게 하면 jpa 기본 메서드와 querydsl 메서드를 한 곳에서 모두 쓸 수 있습니다.
-        return postRepository.getPost(lastSeenId);
+        return postRepository.getAllPost(lastSeenId);
+    }
+
+    public PostEntity getPost(Long postId) {
+        // 그렇게 하면 jpa 기본 메서드와 querydsl 메서드를 한 곳에서 모두 쓸 수 있습니다.
+        return postRepository.getPost(postId);
     }
 }
