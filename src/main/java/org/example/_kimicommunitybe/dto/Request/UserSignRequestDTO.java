@@ -1,18 +1,12 @@
-package org.example._kimicommunitybe.dto;
+package org.example._kimicommunitybe.dto.Request;
 
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
-@AllArgsConstructor
-//user entity 구성 (username, userId) 속성을 가지고 있다.
-public class UserJoinDTO {
+public class UserSignRequestDTO {
     @NotBlank(message = "이메일을 입력해주세요")
     @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$", message = "올바른 이메일 주소 형식을 입력해주세요")
     private String email;
@@ -27,6 +21,6 @@ public class UserJoinDTO {
     @Size(min = 1, max = 10,message = "닉네임은 최대 10자까지 가능합니다")
     private String nickname;
 
-    @NotBlank(message = "프로필 사진을 추가해주세요")
-    private String profile_image;
+    //@NotBlank(message = "프로필 사진을 추가해주세요")
+    private String profileImageUrl;
 }

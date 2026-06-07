@@ -1,49 +1,118 @@
 package org.example._kimicommunitybe.service;
 
-import org.example._kimicommunitybe.dto.LoginDTO;
-import org.example._kimicommunitybe.dto.UserJoinDTO;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.example._kimicommunitybe.dto.Request.UserLoginRequestDTO;
+import org.example._kimicommunitybe.entity.RefreshToken;
+import org.example._kimicommunitybe.entity.User;
+import org.example._kimicommunitybe.jwt.JwtProvider;
+import org.example._kimicommunitybe.repository.RefreshTokenRepository;
 import org.example._kimicommunitybe.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.time.Instant;
 
 @Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class LoginService {
-    //로그인 비즈니스 로직 작성.
-    private final JwtTokenService jwtTokenService;
 
-    public  LoginService(JwtTokenService jwtTokenService){
-        this.jwtTokenService=jwtTokenService;
+    private final UserRepository userRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtProvider jwtProvider;
+
+    private static final int ACCESS_TOKEN_EXPIRATION = 15 * 60; // 15분
+    private static final int REFRESH_TOKEN_EXPIRATION = 14 * 24 * 3600; // 14일
+
+
+    @Transactional
+    public String loginUser(UserLoginRequestDTO login, HttpServletResponse response) {
+        User user = userRepository.findByEmail(login.getEmail()).orElse(null);
+
+        if (user == null || !checkPassword(user,login.getPassword())) {
+            return null;
+        }
+
+        // 기존 리프레시 토큰 무효화
+        refreshTokenRepository.deleteByUserId(user.getUserId());
+        // 새로운 토큰 발급 및 저장
+        var tokenResponse = generateAndSaveTokens(user);
+
+        // 쿠키 추가
+        addTokenCookies(response, tokenResponse);
+
+        return tokenResponse.accessToken();
     }
-    @Autowired
-    UserRepository userRepository;
 
-    public ResponseEntity<Map<String, String>> loginUser(LoginDTO user){
-      //1.db에서 getUser 실행 결과를 담는 result 객체 정의
-      Optional<UserJoinDTO> result =  userRepository.getUser(user);
-      //db에서 로그인 정보와 일치된 사용자를 찾은 경우.
-      if(result.isPresent()) {
-          //1.정상 확인 되면 토큰 발급함.
-          //jwt.claim 이 정보 확인 용도라고 했는데 (user email 정보를 가지고 토큰을 만들어도 될까?)
-          //userJoinEntity 로 바꾼 다음에는 user.getUserid() 를 가져온다.
-          //이메일이 간편하기는 하지만,string 자체는 헤더의 용량을 너무 늘린다.
-          String token = jwtTokenService.createToken(user.getEmail(), "ROLE_USER");
+    @Transactional
+    public TokenResponse refreshTokens(String refreshToken, HttpServletResponse response) {
+        var parsedRefreshToken = jwtProvider.parse(refreshToken);
 
-          Map<String, String> response = new HashMap<>();
-          response.put("access token",token);
+        RefreshToken entity = refreshTokenRepository.findByTokenAndRevokedFalse(refreshToken).orElse(null);
 
-          return ResponseEntity.ok(response);
-          //.사용자가 있음이 확인되면 JWT 를 발급한다.
-      }
-      //db에서 로그인 정보와 일치된 사용자를 찾지 못한 경우.
-      else{
-          return ResponseEntity.status(401).body(Map.of("error","로그인 정보가 유효하지 않습니다."));
-      }
+        if (entity == null || entity.getExpiresAt().isBefore(Instant.now())) {
+            return null;
+        }
 
+        Long userId = Long.valueOf(parsedRefreshToken.getBody().getSubject());
+        User user = userRepository.findById(userId).orElse(null);
+
+        if (user == null) {
+            return null;
+        }
+
+        // refresh token은 유지하고 access token만 새로 발급
+        String newAccessToken = jwtProvider.createAccessToken(userId,user.getEmail());
+
+        // access token 쿠키만 갱신
+        addTokenCookie(response, "accessToken", newAccessToken, ACCESS_TOKEN_EXPIRATION);
+
+        return new TokenResponse(newAccessToken, refreshToken);
     }
-    //회원가입 비즈니
+
+    public void logoutUser(HttpServletResponse response) {
+        // 쿠키 즉시 만료
+        addTokenCookie(response, "accessToken", null, 0);
+        addTokenCookie(response, "refreshToken", null, 0);
+    }
+
+    /** Access / Refresh 토큰을 새로 발급하고 DB에 저장 */
+    private TokenResponse generateAndSaveTokens(User user) {
+        String accessToken = jwtProvider.createAccessToken(user.getId(), user.getEmail());
+        String refreshToken = jwtProvider.createRefreshToken(user.getId());
+
+        RefreshToken refreshEntity = new RefreshToken();
+        refreshEntity.setUser(user);
+        refreshEntity.setToken(refreshToken);
+        refreshEntity.setExpiresAt(Instant.now().plusSeconds(REFRESH_TOKEN_EXPIRATION));
+        refreshEntity.setRevoked(false);
+        refreshTokenRepository.save(refreshEntity);
+
+        return new TokenResponse(accessToken, refreshToken);
+    }
+
+    /** AccessToken + RefreshToken 쿠키를 한번에 추가 */
+    private void addTokenCookies(HttpServletResponse response, TokenResponse tokenResponse) {
+        addTokenCookie(response, "accessToken", tokenResponse.accessToken(), ACCESS_TOKEN_EXPIRATION);
+        addTokenCookie(response, "refreshToken", tokenResponse.refreshToken(), REFRESH_TOKEN_EXPIRATION);
+    }
+
+    /** 공통 쿠키 생성 로직 */
+    private void addTokenCookie(HttpServletResponse response, String name, String value, int maxAge) {
+        Cookie cookie = new Cookie(name, value);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(maxAge);
+        response.addCookie(cookie);
+    }
+
+    private boolean checkPassword(User user, String rawPassword) {
+        return passwordEncoder.matches(rawPassword, user.getPassword());
+    }
+
+    public record TokenResponse(String accessToken, String refreshToken) { }
 }
