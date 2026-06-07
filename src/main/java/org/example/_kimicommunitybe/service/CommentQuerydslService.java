@@ -1,10 +1,8 @@
 package org.example._kimicommunitybe.service;
 
 import jakarta.transaction.Transactional;
-import org.example._kimicommunitybe.entity.CommentEntity;
-import org.example._kimicommunitybe.entity.PostEntity;
+import org.example._kimicommunitybe.entity.Comment;
 import org.example._kimicommunitybe.repository.CommentRepository;
-import org.example._kimicommunitybe.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +16,7 @@ public class CommentQuerydslService {
     // PostCustomRepository 대신 통합된 PostRepository를 주입받는 것이 좋습니다.
     CommentRepository commentRepository;
 
-    public List<CommentEntity> getComment() {
+    public List<Comment> getComment() {
         return commentRepository.getComment();
     }
 }

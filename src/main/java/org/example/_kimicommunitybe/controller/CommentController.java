@@ -2,9 +2,8 @@ package org.example._kimicommunitybe.controller;
 
 
 import jakarta.validation.Valid;
-import org.example._kimicommunitybe.dto.Request.CommentDTO;
 import org.example._kimicommunitybe.dto.Request.CommentRequestDTO;
-import org.example._kimicommunitybe.entity.CommentEntity;
+import org.example._kimicommunitybe.entity.Comment;
 import org.example._kimicommunitybe.service.CommentQuerydslService;
 import org.example._kimicommunitybe.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,7 @@ public class CommentController {
 
     //댓글 조회
     @GetMapping
-    public List<CommentDTO> getComment(){
+    public List<Comment> getComment(){
         return commentQuerydslService.getComment();
     }
 

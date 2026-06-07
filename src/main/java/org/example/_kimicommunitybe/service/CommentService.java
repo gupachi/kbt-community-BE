@@ -2,7 +2,7 @@ package org.example._kimicommunitybe.service;
 
 import jakarta.transaction.Transactional;
 import org.example._kimicommunitybe.dto.Request.CommentRequestDTO;
-import org.example._kimicommunitybe.entity.CommentEntity;
+import org.example._kimicommunitybe.entity.Comment;
 import org.example._kimicommunitybe.repository.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ public class CommentService {
     CommentRepository commentRepository;
     //게시글 추가.
     public String createComment(CommentRequestDTO comment){
-        CommentEntity commentEntity = new CommentEntity();
+        Comment commentEntity = new Comment();
 
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
@@ -27,7 +27,7 @@ public class CommentService {
         commentEntity.setCreatedAt(formattedDate);
 
 
-        CommentEntity savedEntiity = commentRepository.save(commentEntity);
+        Comment savedEntiity = commentRepository.save(commentEntity);
         return  "";
     }
     //게시글 수정.

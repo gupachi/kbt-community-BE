@@ -13,16 +13,18 @@ import jakarta.persistence.Table;
 @Entity
 @Getter
 @Setter
-@Table(name="Comment")
-public class CommentEntity {
-    //엔티티의 기본 키.
+@Table(name="comment")
+public class Comment {
+    //댓글 Id(기본키)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id")
     private Long commentId;
 
-    //(수정!!) postId 추가해야 됨.
-
+    //게시글 Id(외래키)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post postId;
 
     private String text;
 
@@ -30,6 +32,6 @@ public class CommentEntity {
     @Column(name = "created_at")
     private String createdAt; //본문 내용
 
-    public  CommentEntity(){};
+    public Comment(){};
 
 }

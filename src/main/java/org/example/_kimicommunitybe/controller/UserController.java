@@ -1,6 +1,7 @@
 package org.example._kimicommunitybe.controller;
 
 import jakarta.validation.Valid;
+import org.example._kimicommunitybe.common.config.ApiResponse;
 import org.example._kimicommunitybe.dto.Request.PostRequestDTO;
 import org.example._kimicommunitybe.dto.Request.UserSignRequestDTO;
 import org.example._kimicommunitybe.dto.Response.UserSignResponseDTO;
@@ -18,12 +19,40 @@ import org.springframework.web.bind.annotation.*;
 public  class UserController {
     @Autowired
     UserService userService;
+
+    //이메일 중복 체크
+    @GetMapping("/email/check")
+    public ResponseEntity<String> checkEmail(@RequestParam(name = "email") String email) {
+        boolean isDuplicated = userService.checkEmailDuplicate(email);
+
+        if (isDuplicated) {
+            // 이미 존재하는 이메일이면 409 Conflict (충돌) 에러와 메시지를 보냅니다.
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 사용 중인 이메일입니다.");
+        }
+        // 사용 가능하면 200 OK를 보냅니다.
+        return ResponseEntity.ok("사용 가능한 이메일입니다.");
+    }
+
+    // 닉네임 중복 체크
+    @GetMapping("/nickname/check")
+    public ResponseEntity<String> checkNickname(@RequestParam(name = "nickname") String nickname) {
+        boolean isDuplicated = userService.checkNicknameDuplicate(nickname);
+
+        if (isDuplicated) {
+            // 이미 존재하는 닉네임이면 409 에러를 보냅니다.
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 사용 중인 닉네임입니다.");
+        }
+        return ResponseEntity.ok("사용 가능한 닉네임입니다.");
+    }
     //회원가입
-    //(수정!!) user_id 받는 방법 고민하고 받을 것
     @PostMapping
-    public ResponseEntity<UserSignResponseDTO>  createUser(@RequestBody @Valid UserSignRequestDTO user) {
+    public ResponseEntity<ApiResponse<UserSignResponseDTO>> createUser(@RequestBody @Valid UserSignRequestDTO user) {
         UserSignResponseDTO responseDTO = userService.createUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+
+        // code와 data(responseDTO)를 담아서 보냄
+        ApiResponse<UserSignResponseDTO> body = new ApiResponse<>("SUCCESS", responseDTO);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(body);
     }
     //유저 정보 수정.
     @PatchMapping("/{userId}")

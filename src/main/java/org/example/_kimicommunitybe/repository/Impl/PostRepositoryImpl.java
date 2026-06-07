@@ -1,11 +1,11 @@
-package org.example._kimicommunitybe.repository;
+package org.example._kimicommunitybe.repository.Impl;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.example._kimicommunitybe.entity.PostEntity;
-import org.example._kimicommunitybe.entity.QPostEntity;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.example._kimicommunitybe.entity.Post;
+import org.example._kimicommunitybe.entity.QPost;
+import org.example._kimicommunitybe.repository.PostCustomRepository;
 
 import java.util.List;
 
@@ -14,25 +14,25 @@ public class PostRepositoryImpl implements PostCustomRepository { // 1. 여기�
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    private final QPostEntity post = QPostEntity.postEntity;
+    private final QPost post = QPost.post;
 
     //SQL 조회 문
     //(수정!!!!) 올바르게 데이터 가져올 수 있도록 수정.
     @Override
-    public List<PostEntity> getAllPost(Integer lastSeenId) {
+    public List<Post> getAllPost(Integer lastSeenId) {
         return jpaQueryFactory.selectFrom(post)
                 .where(
                         ltPostId(lastSeenId) // 아래에 만든 동적 조건 메서드 호출
                 )
-                .orderBy(post.id.desc())
+                .orderBy(post.Id.desc())
                 .limit(10) // 페이징 처리
                 .fetch();
     }
 
     @Override
-    public PostEntity getPost(Long postId) {
+    public Post getPost(Long postId) {
         return jpaQueryFactory.selectFrom(post)
-                .where(post.id.eq(postId))
+                .where(post.Id.eq(postId))
                 .fetchOne();
     }
 
@@ -41,6 +41,6 @@ public class PostRepositoryImpl implements PostCustomRepository { // 1. 여기�
         if (lastSeenId == null) {
             return null;
         }
-        return post.id.lt(lastSeenId);
+        return post.Id.lt(lastSeenId);
     }
 }
